@@ -4,11 +4,37 @@
 
 #!/bin/bash
 
+LOG="erros.txt"
+
+echo "Iniciando criação de diretórios e arquivos..."
+
+# Loop para criação dos diretórios
 for i in $(seq 1 5); do
-    dir_name="dir$i" # Define o nome do diretório
-    mkdir "$dir_name" # Cria o diretório
+    dir_name="dir$i"
+
+    # Verifica se o diretório já existe
+    if [ -e "$dir_name" ]; then
+        echo "O diretório '$dir_name' já existe."
+        echo "Diretório já existente: $dir_name" >> "$LOG"
+        continue
+    fi
+
+    # Cria o diretório e trata erro
+    if ! mkdir "$dir_name" 2>>"$LOG"; then
+        echo "Falha ao criar o diretório '$dir_name'."
+        continue
+    fi
+
+    # Cria 3 arquivos dentro do diretório
     for j in $(seq 1 3); do
-        file_name="$dir_name/file$j" # Define o nome do arquivo dentro do diretório
-        touch "$file_name" # Cria o arquivo
+        file_name="$dir_name/file$j"
+
+        # Tenta criar o arquivo
+        if ! touch "$file_name" 2>>"$LOG"; then
+            echo "Falha ao criar o arquivo '$file_name'."
+        fi
     done
+
 done
+
+echo "Processo concluído."
